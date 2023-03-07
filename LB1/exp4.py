@@ -1,10 +1,16 @@
 import osgeo.ogr
 import math
+import matplotlib.pyplot as plt
 
+xd = []
+yd = []
 
 def find_points(geo, res):
     for i in range(geo.GetPointCount()):
         x, y, z = geo.GetPoint(i)
+
+        xd.append(x)
+        yd.append(y)
 
         if res['north'] is None or res['north'][1] < y:
             res['north'] = (x, y)
@@ -12,10 +18,10 @@ def find_points(geo, res):
         if res['south'] is None or res['south'][1] > y:
             res['south'] = (x, y)
 
-        if res['west'] is None or res['west'][1] > x:
+        if res['west'] is None or res['west'][0] > x:
             res['west'] = (x, y)
 
-        if res['east'] is None or res['east'][1] > x:
+        if res['east'] is None or res['east'][0] < x:
             res['east'] = (x, y)
 
     for i in range(geo.GetGeometryCount()):
@@ -31,10 +37,38 @@ results = {'north': None, 'south': None, 'west': None, 'east': None}
 
 find_points(geometry, results)
 
-print("Найпівнічніша точка: ({:.4f}, {:.4f})".format(results['north'][0], results['north'][1]))
-print("Найпівденніша точка: ({:.4f}, {:.4f})".format(results['south'][0], results['south'][1]))
-print("Зхідна точка: ({:.4f}, {:.4f})".format(results['west'][0], results['west'][1]))
-print("Східна точка: {}".format(results['east']))
+plt.scatter(xd, yd, s=2)
+plt.scatter(results['north'][0], results['north'][1], s=5, c='red')
+plt.scatter(results['south'][0], results['south'][1], s=5, c='red')
+plt.scatter(results['west'][0], results['west'][1], s=5, c='red')
+plt.scatter(results['east'][0], results['east'][1], s=5, c='red')
+plt.show()
+
+print("Штат 1, Північна точка: {}".format(results['north']))
+print("Штат 1, Південна точка: {}".format(results['south']))
+print("Штат 1, Західна точка: {}".format(results['west']))
+print("Штат 1, Східна точка: {}".format(results['east']))
+
+# ----------------------
+
+feature = layer.GetFeature(39)
+geometry = feature.GetGeometryRef()
+
+results2 = {'north': None, 'south': None, 'west': None, 'east': None}
+
+find_points(geometry, results2)
+
+plt.scatter(xd, yd, s=2)
+plt.scatter(results2['north'][0], results2['north'][1], s=5, c='red')
+plt.scatter(results2['south'][0], results2['south'][1], s=5, c='red')
+plt.scatter(results2['west'][0], results2['west'][1], s=5, c='red')
+plt.scatter(results2['east'][0], results2['east'][1], s=5, c='red')
+plt.show()
+
+print("Штат 1, Північна точка: {}".format(results2['north']))
+print("Штат 1, Південна точка: {}".format(results2['south']))
+print("Штат 1, Західна точка: {}".format(results2['west']))
+print("Штат 1, Східна точка: {}".format(results2['east']))
 
 # ----------------------
 
